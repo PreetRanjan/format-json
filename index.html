@@ -12,6 +12,7 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
     />
+
     <style>
       .btn-primary {
         color: #fff;
@@ -34,22 +35,37 @@
               </div>
             </div>
             <div class="p-2 bd-highlight">
-              <button
-                class="btn btn-primary btn-lg"
-                type="button"
-                id="btnformat"
-              >
+              <button class="btn btn-primary" type="button" id="btnformat">
                 Pretify JSON
               </button>
             </div>
             <div class="p-2 bd-highlight">
-              <button
-                class="btn btn-secondary btn-lg"
-                type="button"
-                id="btncopy"
-              >
+              <button class="btn btn-secondary" type="button" id="btncopy">
                 Copy
               </button>
+            </div>
+            <div class="p-2 bd-highlight">
+              <div class="dropdown">
+                <a
+                  class="btn btn-light dropdown-toggle"
+                  href="#"
+                  role="button"
+                  id="dropdownMenuLink"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  More
+                </a>
+
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <li>
+                    <a class="dropdown-item" href="/compare.html"
+                      >Compare JSON</a
+                    >
+                  </li>
+                  <li><a class="dropdown-item" href="#">...</a></li>
+                </ul>
+              </div>
             </div>
           </div>
 
@@ -74,18 +90,21 @@
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
+
     <script>
       var formatButton = document.getElementById("btnformat");
 
       formatButton.addEventListener("click", () => {
         let inputJson = document.getElementById("input-area");
-        console.log(inputJson.value);
+
         const formatedJson = JSON.stringify(
           JSON.parse(inputJson.value),
           null,
           4
         );
+
         inputJson.value = formatedJson;
+        // Syntax Highlight
       });
 
       var copyButton = document.getElementById("btncopy");
