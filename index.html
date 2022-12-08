@@ -19,10 +19,25 @@
         background-color: #10366e;
         border-color: #060f1c;
       }
+      .btn-check:focus + .btn-primary,
+      .btn-primary:focus {
+        color: #fff;
+        background-color: #10366e;
+        border-color: #10366e;
+        box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
+      }
+      .btn-primary:hover {
+        color: #fff;
+        background-color: #10366e;
+        border-color: #0a58ca;
+      }
+      a {
+        color: #10366e;
+      }
     </style>
     <title>Pretify JSON</title>
   </head>
-  <body>
+  <body style="background-color: aliceblue">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-2"></div>
@@ -30,13 +45,22 @@
           <div class="d-flex bd-highlight">
             <div class="p-2 flex-grow-1 bd-highlight">
               <div class="container">
-                <h3 contenteditable class="fw-bold">Pretify JSON</h3>
-                <p class="col-md-8 fs-4">Make your JSON Prettier !! 😉</p>
+                <h3
+                  class="fw-bold"
+                  contenteditable="true"
+                  id="header"
+                  spellcheck="false"
+                >
+                  Pretify JSON
+                </h3>
+                <p contenteditable="true" class="col-md-8 fs-4">
+                  Make your JSON Prettier !! 😉
+                </p>
               </div>
             </div>
             <div class="p-2 bd-highlight">
-              <button class="btn btn-primary" type="button" id="btnformat">
-                Pretify JSON
+              <button class="btn btn-primary" type="button" id="btn-download">
+                Download
               </button>
             </div>
             <div class="p-2 bd-highlight">
@@ -45,11 +69,12 @@
               </button>
             </div>
             <div class="p-2 bd-highlight">
+              <!-- Example single danger button -->
               <div class="dropdown">
                 <a
                   class="btn btn-light dropdown-toggle"
-                  href="#"
                   role="button"
+                  href="#"
                   id="dropdownMenuLink"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
@@ -72,30 +97,58 @@
                       >Deep Compare JSON</a
                     >
                   </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="https://preetranjan.github.io/pyspark-schema-generator/"
-                      >Pyspark Schema generator</a
-                    >
-                  </li>
                 </ul>
               </div>
             </div>
           </div>
 
           <textarea
+            autofocus="true"
             id="input-area"
             style="min-width: 100%; font-family: consolas"
-            class="form-control text-area"
+            class="form-control text-area shadow"
             spellcheck="false"
+            placeholder="Your JSON Input here...."
             rows="20"
           ></textarea>
+          <div class="container d-flex justify-content-center mt-2">
+            <button class="btn btn-primary btn-lg" type="button" id="btnformat">
+              Pretify JSON
+            </button>
+          </div>
         </div>
         <div class="col-md-2"></div>
       </div>
 
-      <small>Made with ❤ By PREETish</small>
+      <small
+        >Made with ❤ By
+        <a
+          class="fw-bold"
+          style="text-decoration: none"
+          href="https://github.com/PreetRanjan"
+          target="_blank"
+          >PREETish</a
+        >
+      </small>
+
+      <!-- <button type="button" class="btn btn-primary" id="liveToastBtn">Show live toast</button> -->
+      <div
+        class="toast shadow align-items-center text-white bg-danger border-0 position-absolute p-2 top-50 start-50 translate-middle"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        id="liveToast"
+      >
+        <div class="d-flex">
+          <div class="toast-body" id="toast-body">Global Error</div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
     </div>
     <!-- Optional JavaScript; choose one of the two! -->
 
@@ -105,13 +158,39 @@
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
-
+    <!-- <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+      integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+      integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+      crossorigin="anonymous"
+    ></script> -->
     <script>
+      //toast code
+      let toastEl = document.getElementById("liveToast");
+      let option = { autohide: true, delay: 2000 };
+      let toast = new bootstrap.Toast(toastEl, option);
+
+      window.onload = () => {
+        toast.hide();
+      };
+      window.onerror = (error) => {
+        console.log(error);
+        var el = document.getElementById("toast-body");
+        el.innerText = error.toString();
+        toast.show();
+      };
+
       var formatButton = document.getElementById("btnformat");
 
       formatButton.addEventListener("click", () => {
         let inputJson = document.getElementById("input-area");
-
+        if (inputJson.value.length == 0) {
+          throw new Error("No input!!");
+        }
         const formatedJson = JSON.stringify(
           JSON.parse(inputJson.value),
           null,
@@ -128,6 +207,36 @@
         navigator.clipboard.writeText(inputJson);
         console.log(event.target.innerText);
         event.target.innerText = "Copied";
+      });
+
+      //download json
+      function download(content, fileName, contentType) {
+        var a = document.createElement("a");
+        var file = new Blob([content], { type: contentType });
+        a.href = URL.createObjectURL(file);
+        a.download = fileName;
+        a.click();
+      }
+      var downloadButton = document.getElementById("btn-download");
+
+      downloadButton.addEventListener("click", () => {
+        let inputJson = document.getElementById("input-area");
+        if (inputJson.value.length == 0) {
+          throw new Error("No input!!");
+        }
+        const formatedJson = JSON.stringify(
+          JSON.parse(inputJson.value),
+          null,
+          4
+        );
+
+        inputJson.value = formatedJson;
+        // Syntax Highlight
+
+        //save json
+
+        let fileName = document.getElementById("header").innerText.trim();
+        download(formatedJson, `${fileName}.json`, "text/plain");
       });
     </script>
     <!-- Option 2: Separate Popper and Bootstrap JS -->
